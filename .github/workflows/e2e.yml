@@ -1,0 +1,24 @@
+name: e2e testing
+
+on: workflow_dispatch
+
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t app-container:latest .
+
+      - name: Run container
+        run: docker container run --rm app-container:latest
+
+      - name: Check service is up
+        run: curl --fail http://localhost:80
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f app-container
